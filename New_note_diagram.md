@@ -27,7 +27,7 @@
 
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
-    Note right of browser: new note is added
+    Note right of browser: new note is added when save is clicked
     server-->>browser: status 302 found
     Note right of browser: successful request as response of status 302 found
     deactivate server
