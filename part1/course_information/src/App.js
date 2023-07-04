@@ -15,10 +15,10 @@ const App = () => {
     )
   }
 
-  const Part = (values) => {
+  const Part = (props) => {
     return (
       <p>
-        {values[0]} {values[1]}
+        {props.part} {props.exercise}
       </p>
     )
   }
@@ -26,9 +26,9 @@ const App = () => {
   const Content = () => {
     return (
       <div>
-        <Part values={[part1, exercises1]}/>
-        <Part values={[part2, exercises2]}/>
-        <Part values={[part3, exercises3]}/>
+        <Part part={part1} exercise={exercises1} />
+        <Part part={part2} exercise={exercises2} />
+        <Part part={part3} exercise={exercises3} />
       </div>
     )
   }
