@@ -1,5 +1,20 @@
 import Part from './Part'
 
+const Total = ({course}) => {
+    return ( 
+    <li>
+        <strong>Total of &nbsp;
+
+            {
+            course.parts.reduce((total, part) => 
+            total + part.exercises, 0)
+            }
+        
+        </strong>
+    </li>
+    )
+} 
+
 const Course = ({course}) => {
     console.log(course)
 
@@ -12,6 +27,7 @@ const Course = ({course}) => {
                     <Part key={part.id} name={part.name} exercises={part.exercises} />
                 )
             }
+            <Total course={course} />
         </ul>
         </>
     )
