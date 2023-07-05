@@ -17,11 +17,11 @@ const App = () => {
     ]
   }
 
-  const Header = (props) => {
-    console.log(props)
+  const Header = ({course}) => {
+    console.log(course)
     return (
       <div>
-        <h1>{props.course}</h1>
+        <h1>{course}</h1>
       </div>
     )
   }
