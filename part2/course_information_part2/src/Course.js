@@ -6,7 +6,7 @@ const Total = ({course}) => {
         <strong>Total of &nbsp;
 
             {
-            course.parts.reduce((total, part) => 
+            course.reduce((total, part) => 
             total + part.exercises, 0)
             }
         
@@ -15,20 +15,43 @@ const Total = ({course}) => {
     )
 } 
 
-const Course = ({course}) => {
-    console.log(course)
+const Parts = ({parts}) => {
+    return (
+        parts.map(part => 
+            <Part key={part.id} name={part.name} exercises={part.exercises} />
+        )
+    )
+}
 
+const Header = ({course}) => {
+    return (
+        <h1>
+            {course.name}
+        </h1>
+    )
+}
+
+const Content = ({course}) => {
+    return ( 
+        <>
+        <Header key={course.id} course={course}/>
+        <ul>
+            <Parts parts={course.parts}/>
+            <Total course={course.parts} />
+        </ul>
+        </>
+    )
+}
+
+const Course = ({course}) => {
+    
     return (
         <>
-        <h1 key={course.id}>{course.name}</h1>
-        <ul>
-            {
-                course.parts.map(part => 
-                    <Part key={part.id} name={part.name} exercises={part.exercises} />
-                )
-            }
-            <Total course={course} />
-        </ul>
+        {
+            course.map(value => 
+                <Content course={value} />
+            )
+        }
         </>
     )
 }
