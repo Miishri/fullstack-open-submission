@@ -1,13 +1,5 @@
 import { useState } from 'react'
-
-
-const Person = ({person}) => {
-  return (
-    <p>
-      {person.name} {person.phone}
-    </p>
-  )
-}
+import Filter from './Filter'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -22,6 +14,7 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault();
+    
     const person = {
       name: newName,
       phone: newPhone,
@@ -93,19 +86,7 @@ const App = () => {
       <div>
       </div>
       <div>
-      {
-        persons.map((person) => {
-          if (newFilter !== '') {
-            if (person.name.includes(newFilter)) {
-              return <Person key={person.id} person={person} />
-            }
-
-          }else {
-            return <Person key={person.id} person={person} />
-          }
-        }
-        )
-      }
+        <Filter filter={newFilter} persons={persons} />
       </div>
     </div>
   )
