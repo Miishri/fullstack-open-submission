@@ -12,17 +12,20 @@ const Person = ({person}) => {
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas',
-      phone: 1231312
+      phone: 1231312,
+      id: 0
     }
   ]);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState(0);
+  const [newFilter, setNewFilter] = useState('');
 
   const addNewPerson = (event) => {
     event.preventDefault();
     const person = {
       name: newName,
-      phone: newPhone
+      phone: newPhone,
+      id: persons.length + 1
     };
 
     if (newName !== '') {
@@ -49,15 +52,27 @@ const App = () => {
     setNewPhone(event.target.value);
   }
 
+  const handleFilterChange = (event) => {
+    console.log("In handle filter change:", event.target.value);
+    setNewFilter(event.target.value)
+  }
+
   function personExists(person){
     return persons.filter(p => p.name === person.name);
   }
   
-
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <form onSubmit={addNewPerson} >
+        <h2>Search</h2>
+        <div>
+          Filter with: <input
+            value={newFilter}
+            onChange={handleFilterChange}
+          />
+        </div>
+        <h2>Add new</h2>
         <div>
           name: <input
             value={newName}
@@ -76,12 +91,21 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-        {
-          persons.map((person) => {
-            return <Person key={persons.indexOf(person)} person={person} />
+      </div>
+      <div>
+      {
+        persons.map((person) => {
+          if (newFilter !== '') {
+            if (person.name.includes(newFilter)) {
+              return <Person key={person.id} person={person} />
+            }
+
+          }else {
+            return <Person key={person.id} person={person} />
           }
-          )
         }
+        )
+      }
       </div>
     </div>
   )
