@@ -49,7 +49,7 @@ const Course = ({course}) => {
         <>
         {
             course.map(value => 
-                <Content course={value} />
+                <Content course={value} /> //unsure about key error
             )
         }
         </>
