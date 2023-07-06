@@ -7,10 +7,10 @@ const Filter = ({filter, persons}) => {
             persons.map((person) => {
                 if (filter !== '') {
                     if (person.name.includes(filter)) {
-                        return <Person key={person.id} person={person} />
+                        return <Person key={person.id} name={person.name} number={person.number} />
                     }
                 }else {
-                    return <Person key={person.id} person={person} />
+                    return <Person key={person.id} name={person.name} number={person.number} />
                 }
             }
         )}

@@ -1,8 +1,8 @@
 
-const Person = ({person}) => {
+const Person = (person) => {
     return (
       <p>
-        {person.name} {person.phone}
+        {person.name} {person.number}
       </p>
     )
 }

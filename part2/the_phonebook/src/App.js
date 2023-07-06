@@ -1,23 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import Filter from './Filter'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      phone: 1231312,
-      id: 0
-    }
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
-  const [newPhone, setNewPhone] = useState(0);
+  const [newNumber, setNewNumber] = useState(0);
   const [newFilter, setNewFilter] = useState('');
+
+  useEffect(() => {
+    console.log(" im in effect")
+    const dataUrl = "http://localhost:3001/persons"
+
+    axios
+      .get(dataUrl)
+      .then(response => {
+        console.log("inside promise")
+        setPersons(response.data);
+      })
+
+  }, [])
+
+  console.log(persons)
 
   const addNewPerson = (event) => {
     event.preventDefault();
     
     const person = {
       name: newName,
-      phone: newPhone,
+      phone: newNumber,
       id: persons.length + 1
     };
 
@@ -28,7 +39,7 @@ const App = () => {
       }else {
         setPersons(persons.concat(person));
         setNewName('');
-        setNewPhone(0);
+        setNewNumber(0);
       }
     }
     //debug
@@ -40,9 +51,9 @@ const App = () => {
     setNewName(event.target.value);
   };
 
-  const handlePhoneChange = (event) => {
+  const handleNumberChange = (event) => {
     console.log("In handle phone change:", event.target.value);
-    setNewPhone(event.target.value);
+    setNewNumber(event.target.value);
   }
 
   const handleFilterChange = (event) => {
@@ -74,8 +85,8 @@ const App = () => {
         </div>
         <div>
           phone: <input
-            value={newPhone}
-            onChange={handlePhoneChange}
+            value={newNumber}
+            onChange={handleNumberChange}
           />
         </div>
         <div>
