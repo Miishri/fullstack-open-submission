@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import Filter from './Filter'
+import phoneService from './Service/phonebookService'
+import Person from './model/Person'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -9,41 +9,39 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('');
 
   useEffect(() => {
-    console.log(" im in effect")
-    const dataUrl = "http://localhost:3001/persons"
+    console.log(" im in effect");
 
-    axios
-      .get(dataUrl)
-      .then(response => {
-        console.log("inside promise")
-        setPersons(response.data);
-      })
+    phoneService
+    .getAll()
+    .then(persons => {
+      setPersons(persons);
+    });
+  }, []);
 
-  }, [])
-
-  console.log(persons)
-
-  const addNewPerson = (event) => {
+  const newPerson = (event) => {
     event.preventDefault();
     
     const person = {
       name: newName,
-      phone: newNumber,
+      number: newNumber,
       id: persons.length + 1
     };
 
-    if (newName !== '') {
-      if (personExists(person).length) {
-        alert(`${person.name} is already added to phonebook`)
-        console.log(personExists(person))
-      }else {
-        setPersons(persons.concat(person));
+    console.log("inside add new person");
+
+    if (!phoneExists(person)) {
+        if (newName !== '' && newNumber !== '') {
+          phoneService.createPerson(person).then(responsePerson =>{
+            console.log("inside create person promise", responsePerson);
+            setPersons(persons.concat(responsePerson))
+          })
+        }
         setNewName('');
-        setNewNumber(0);
-      }
+        setNewNumber(0); 
+      } else {
+      alert(`number: ${person.number} already exists inside the phonebook`);
+      console.log("inside person alert");
     }
-    //debug
-    console.log("in add new person", persons);
   };
 
   const handlePersonChange = (event) => {
@@ -61,14 +59,14 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
-  function personExists(person){
-    return persons.filter(p => p.name === person.name);
+  function phoneExists(person) {
+    return persons.some(p => p.number === person.number);
   }
   
   return (
     <div>
       <h1>Phonebook</h1>
-      <form onSubmit={addNewPerson} >
+      <form onSubmit={newPerson} >
         <h2>Search</h2>
         <div>
           Filter with: <input
@@ -95,9 +93,26 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-      </div>
-      <div>
-        <Filter filter={newFilter} persons={persons} />
+        <ul style={{ listStyleType: 'none', padding:0}}>
+          {
+            persons.map(person => {
+              if (newFilter !== '') {
+                if (person.name.includes(newFilter)) {
+                  return (
+                    <li key={person.id}>
+                    <Person name={person.name} number={person.number} /> 
+                    </li>
+                  )
+                }
+              }else {
+                return (
+                  <Person key={person.id} name={person.name} number={person.number} /> 
+                )
+              }
+            }
+            )
+          }
+        </ul>  
       </div>
     </div>
   )
