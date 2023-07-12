@@ -17,12 +17,11 @@ const updatePerson = (personId, updatedPerson) => {
     return putRequest.then(putResponse => putResponse.data);
 }
 
-const deletePerson = personId => {
+const deletePerson = (personId) => {
     const deleteRequest = axios.delete(`${dbURL}/${personId}`);
-    return deleteRequest.then(deleteResponse => deleteResponse.data);
-}
-
-
+    return deleteRequest;
+  };
+  
 export default {
     getAll,
     createPerson,

@@ -10,13 +10,16 @@ const App = () => {
 
   useEffect(() => {
     console.log(" im in effect");
+    loadAll();
+  }, []);
 
+  const loadAll = () => { 
     phoneService
     .getAll()
     .then(persons => {
       setPersons(persons);
     });
-  }, []);
+  }
 
   const newPerson = (event) => {
     event.preventDefault();
@@ -30,7 +33,7 @@ const App = () => {
     console.log("inside add new person");
 
     if (!phoneExists(person)) {
-        if (newName !== '' && newNumber !== '') {
+        if (newName !== '' && newNumber !== '' ) {
           phoneService.createPerson(person).then(responsePerson =>{
             console.log("inside create person promise", responsePerson);
             setPersons(persons.concat(responsePerson))
@@ -61,6 +64,13 @@ const App = () => {
 
   function phoneExists(person) {
     return persons.some(p => p.number === person.number);
+  }
+
+  const handleDeleteButton = (id) => {
+    phoneService.deletePerson(id).then(() => {
+      alert("Deleted")
+      loadAll();
+    })
   }
   
   return (
@@ -100,13 +110,17 @@ const App = () => {
                 if (person.name.includes(newFilter)) {
                   return (
                     <li key={person.id}>
-                    <Person name={person.name} number={person.number} /> 
+                      <Person name={person.name} number={person.number} /> 
+                      <button value={person.id} >button</button>
                     </li>
                   )
                 }
               }else {
                 return (
-                  <Person key={person.id} name={person.name} number={person.number} /> 
+                  <li key={person.id}>
+                    <Person key={person.id} name={person.name} number={person.number} /> 
+                    <button onClick={() => handleDeleteButton(person.id)}>button</button>
+                  </li>
                 )
               }
             }
