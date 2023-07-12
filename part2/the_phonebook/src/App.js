@@ -23,27 +23,37 @@ const App = () => {
 
   const newPerson = (event) => {
     event.preventDefault();
-    
+  
     const person = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      id: persons.length + 1,
     };
-
+  
     console.log("inside add new person");
-
-    if (!phoneExists(person)) {
-        if (newName !== '' && newNumber !== '' ) {
-          phoneService.createPerson(person).then(responsePerson =>{
+  
+    if (!phoneExists(person) && !personExists(person)) {
+      if (newName !== '' && newNumber !== '') {
+        phoneService.createPerson(person)
+          .then(responsePerson => {
             console.log("inside create person promise", responsePerson);
-            setPersons(persons.concat(responsePerson))
-          })
+            setPersons(persons.concat(responsePerson));
+          });
+      }
+      setNewName('');
+      setNewNumber(0);
+    } else {
+      const existingPerson = persons.find(p => p.name === person.name);
+      if (existingPerson.number !== person.number) {
+        const response = window.confirm(`Do you want to change the phone number for ${person.name}`);
+        if (response) {
+          phoneService.updatePerson(existingPerson.id, person)
+            .then(() => {
+              console.log("complete update");
+              loadAll();
+            });
         }
-        setNewName('');
-        setNewNumber(0); 
-      } else {
-      alert(`number: ${person.number} already exists inside the phonebook`);
-      console.log("inside person alert");
+      }
     }
   };
 
@@ -65,10 +75,13 @@ const App = () => {
   function phoneExists(person) {
     return persons.some(p => p.number === person.number);
   }
+  function personExists(person) {
+    return persons.some(p => p.name === person.name);
+  }
 
   const handleDeleteButton = (id) => {
     phoneService.deletePerson(id).then(() => {
-      alert("Deleted")
+      console.log("inside delete");
       loadAll();
     })
   }
