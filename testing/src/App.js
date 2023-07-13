@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import Note from './Note'
+import Notification from './Notification'
 
 
 const App = (props) => {
   const [notes, setNotes] = useState(props.notes)
   const [newNote, setNewNote] = useState(    'a new note...'  ) 
   const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('some error happened...')
 
 
   const addNote = (event) => {
@@ -32,6 +34,7 @@ const App = (props) => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>        
         <button onClick={() => setShowAll(!showAll)}>          
           show {showAll ? 'important' : 'all' }        

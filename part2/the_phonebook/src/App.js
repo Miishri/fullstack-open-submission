@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import phoneService from './Service/phonebookService'
 import Person from './model/Person'
+import ErrorNotification from './ErrorNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState(0);
   const [newFilter, setNewFilter] = useState('');
+  const [errorMessage, setNewErrrorMessage] = useState('Info to be displayed!')
+  const [currentDelete, setCurrentDelete] = useState('')
 
   useEffect(() => {
     console.log(" im in effect");
@@ -38,6 +41,10 @@ const App = () => {
           .then(responsePerson => {
             console.log("inside create person promise", responsePerson);
             setPersons(persons.concat(responsePerson));
+            setNewErrrorMessage(`Added ${person.name}`)
+            setTimeout(() => {
+              setNewErrrorMessage(null)
+            }, 3000)
           });
       }
       setNewName('');
@@ -56,6 +63,7 @@ const App = () => {
       }
     }
   };
+
 
   const handlePersonChange = (event) => {
     console.log("In handle person change:", event.target.value);
@@ -79,8 +87,9 @@ const App = () => {
     return persons.some(p => p.name === person.name);
   }
 
-  const handleDeleteButton = (id) => {
-    phoneService.deletePerson(id).then(() => {
+  const handleDeleteButton = (person) => {
+    setCurrentDelete(person.name)
+    phoneService.deletePerson(person.id).then(() => {
       console.log("inside delete");
       loadAll();
     })
@@ -89,6 +98,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <ErrorNotification message={errorMessage} />
       <form onSubmit={newPerson} >
         <h2>Search</h2>
         <div>
@@ -132,7 +142,7 @@ const App = () => {
                 return (
                   <li key={person.id}>
                     <Person key={person.id} name={person.name} number={person.number} /> 
-                    <button onClick={() => handleDeleteButton(person.id)}>button</button>
+                    <button onClick={() => handleDeleteButton(person)}>button</button>
                   </li>
                 )
               }
