@@ -13,10 +13,10 @@ const ErrorNotification = ({message}) => {
         return null;
     }else {
         return (
-            <div style={boxStyle}>
-                {message}
-            </div>
-        )
+        <div style={boxStyle}>
+            {message}
+        </div>
+    )
     }
 }
 

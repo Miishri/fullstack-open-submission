@@ -8,12 +8,15 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState(0);
   const [newFilter, setNewFilter] = useState('');
-  const [errorMessage, setNewErrrorMessage] = useState('Info to be displayed!')
+  const [errorMessage, setNewErrrorMessage] = useState('No error :)')
   const [currentDelete, setCurrentDelete] = useState('')
 
   useEffect(() => {
     console.log(" im in effect");
     loadAll();
+    setTimeout(() => {
+      setNewErrrorMessage(null)
+    }, 3000)
   }, []);
 
   const loadAll = () => { 
@@ -91,8 +94,15 @@ const App = () => {
     setCurrentDelete(person.name)
     phoneService.deletePerson(person.id).then(() => {
       console.log("inside delete");
-      loadAll();
-    })
+      loadAll()
+    }).catch(error => {
+      setNewErrrorMessage(`Person ${currentDelete} was already removed`)
+      loadAll()
+      setTimeout(() => {
+        setNewErrrorMessage(null)
+      }, 3000)
+    }
+    )
   }
   
   return (
