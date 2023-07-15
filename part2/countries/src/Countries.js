@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios'; 
 
 const Country = ({country}) => {
+
+    const [weather, setWeather] = useState(null)
+
+    useEffect(() => {
+        console.log("inside here");
+        loadWeather()
+    }, []);
+
+    const loadWeather = () => {
+        axios.get(`http://api.weatherapi.com/v1/current.json?key=01eab423265c4688949190515231507&q=${country.name.common}&aqi=no`).then(response => setWeather(response.data))
+    }
+
     if(country) {
         let langObj = country.languages;
         let langArray = []
         let count = 0
+
 
         for (let key in langObj) {
             if (langObj.hasOwnProperty(key)) {
@@ -30,6 +44,20 @@ const Country = ({country}) => {
                     <p style={{fontSize:'100px', margin:'0'}}>
                     {country.flag}
                     </p>
+                    <div>
+                        {
+                        weather ? (
+                            <>
+                            <h3>Weather in {country.name.common}</h3>
+                            <p>Temperature {weather.current.temp_c} celsius</p>
+                            <img src={weather.current.condition.icon} alt="weather condition" />
+                            <p>Wind {weather.current.wind_mph * 0.44704} m/s</p>
+                            </>
+                        ) : (
+                            <></>
+                        )
+                        }
+                    </div>
                 </div>
             </div>
         )
@@ -78,10 +106,13 @@ const Countries = ({countries, search}) => {
                        }) 
                     }
                 </ul>
+                <>
                 {
                     current ? <Country country={current} /> : <></>
                 }
+                </>
             </div>
+            
         )
     }
 
