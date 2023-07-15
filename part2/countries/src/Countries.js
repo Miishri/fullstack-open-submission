@@ -1,22 +1,7 @@
-const Countries = ({countries, search}) => {
-    let searchedCountries = []
+import { useState } from "react";
 
-    if (search) {
-        searchedCountries = countries.filter(value => value.name.common.toLowerCase().includes(search.toLowerCase()));
-        console.log(searchedCountries);
-    }
-
-    if (searchedCountries.length > 10) {
-        return (
-            <p>
-                Too many matches, specify another search.
-            </p>
-        )
-    }
-
-    if (searchedCountries.length === 1) {
-
-        const country = searchedCountries[0];
+const Country = ({country}) => {
+    if(country) {
         let langObj = country.languages;
         let langArray = []
         let count = 0
@@ -49,15 +34,53 @@ const Countries = ({countries, search}) => {
             </div>
         )
     }
+}
+
+const Countries = ({countries, search}) => {
+    const [current, setCurrent] = useState('');
+    let searchedCountries = []
+
+    if (search) {
+        searchedCountries = countries.filter(value => value.name.common.toLowerCase().includes(search.toLowerCase()));
+        console.log(searchedCountries);
+    }
+
+    if (searchedCountries.length > 10) {
+        return (
+            <p>
+                Too many matches, specify another search.
+            </p>
+        )
+    }
+
+    if (searchedCountries.length === 1) {
+        return (
+            <Country country={searchedCountries[0]}/>
+        )
+    }
+
+    
 
     if (searchedCountries.length > 1) {
         return (
             <div>
                 <ul>
                     {
-                       searchedCountries.map((country) => <li key={searchedCountries.indexOf(country)}>{country.name.common}</li>) 
+                       searchedCountries.map((country) => {
+                        return (
+                            <>
+                                <div style={{display:"flex", gap:"10px"}}>
+                                <li key={searchedCountries.indexOf(country)}>{country.name.common}</li>
+                                <button onClick={() => setCurrent(country)}>show</button>
+                                </div>
+                            </>
+                        )       
+                       }) 
                     }
                 </ul>
+                {
+                    current ? <Country country={current} /> : <></>
+                }
             </div>
         )
     }
