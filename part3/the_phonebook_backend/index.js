@@ -44,11 +44,25 @@ app.get("/phonebook/:id", (req, res) => {
 
     if (!contact) {
         return res.status(404).json({
-            error: 'Contact was not found'
+            error: `Contact was not found with ID ${id}`
         })
     }
 
     res.json(contact)
+})
+
+app.delete('/phonebook/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const contact = phonebook[id]
+
+    if (!contact) {
+        return res.status(404).json({
+            error: `Contact was not deleted with ID ${id}`
+        })
+    }
+
+    phonebook = phonebook.filter(contact => contact.id !== id)
+    res.status(204).end()
 })
 
 const PORT = 3001
