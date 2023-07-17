@@ -28,12 +28,31 @@ let phonebook = [
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the phonebook!</h1>')
 })
-
 app.get('/phonebook', (req, res) => {
     res.json(phonebook)
+})
+app.get('/info', (req, res) => {
+    res.send(
+        `<h1>Phonebook has info for ${phonebook.length}</h1>
+               <p>${new Date().toUTCString()}</p>`
+            )
+})
+
+app.get("/phonebook/:id", (req, res) => {
+    const id = Number(req.params.id)
+    const contact = phonebook[id]
+
+    if (!contact) {
+        return res.status(404).json({
+            error: 'Contact was not found'
+        })
+    }
+
+    res.json(contact)
 })
 
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
