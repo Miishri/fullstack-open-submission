@@ -51,6 +51,40 @@ app.get("/phonebook/:id", (req, res) => {
     res.json(contact)
 })
 
+const generateId = () => {
+    const maxId = phonebook.length > 0
+        ? Math.max(...phonebook.map(n => n.id))
+        : 0
+    return maxId + 1
+}
+
+app.post("/phonebook", (req, res) => {
+    const body = req.body
+    console.log(body)
+
+    if (!(body.name && body.number)) {
+        return res.status(400).json({
+            error: 'Name or number is missing'
+        })
+    }
+
+    const contact = {
+        id: generateId(),
+        name: body.name,
+        number: body.number
+    }
+
+    if (phonebook.find(c => c.name === contact.name)) {
+        return res.status(400).json({
+            error: "name must be unique"
+        })
+    }
+
+    phonebook = phonebook.concat(contact)
+
+    res.json(contact)
+})
+
 app.delete('/phonebook/:id', (req, res) => {
     const id = Number(req.params.id)
     const contact = phonebook[id]
@@ -64,6 +98,7 @@ app.delete('/phonebook/:id', (req, res) => {
     phonebook = phonebook.filter(contact => contact.id !== id)
     res.status(204).end()
 })
+
 
 const PORT = 3001
 app.listen(PORT, () => {
