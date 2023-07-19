@@ -1,7 +1,10 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
+
 app.use(express.json())
+app.use(cors())
 
 morgan.token('contactBody', (req, res) => {
     const body = req.body
@@ -11,26 +14,6 @@ morgan.token('contactBody', (req, res) => {
 app.use(morgan(`:method :url :status :res[content-length] - :response-time ms :contactBody`))
 
 let phonebook = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
 ]
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the phonebook!</h1>')
@@ -94,7 +77,7 @@ app.post("/phonebook", (req, res) => {
 
 app.delete('/phonebook/:id', (req, res) => {
     const id = Number(req.params.id)
-    const contact = phonebook[id]
+    const contact = phonebook.find(c => c.id === id)
 
     if (!contact) {
         return res.status(404).json({
@@ -107,7 +90,7 @@ app.delete('/phonebook/:id', (req, res) => {
 })
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

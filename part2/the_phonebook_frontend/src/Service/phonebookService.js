@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const dbURL = "http://localhost:3001/persons";
+const dbURL = "http://localhost:3001/phonebook";
 
 const getAll = () => {
     const getRequest = axios.get(dbURL);
@@ -18,8 +18,7 @@ const updatePerson = (personId, updatedPerson) => {
 }
 
 const deletePerson = (personId) => {
-    const deleteRequest = axios.delete(`${dbURL}/${personId}`);
-    return deleteRequest;
+    return axios.delete(`${dbURL}/${personId}`);
   };
   
 export default {

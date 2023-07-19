@@ -8,14 +8,14 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState(0);
   const [newFilter, setNewFilter] = useState('');
-  const [errorMessage, setNewErrrorMessage] = useState('No error :)')
+  const [errorMessage, setNewErrorMessage] = useState('No error :)')
   const [currentDelete, setCurrentDelete] = useState('')
 
   useEffect(() => {
     console.log(" im in effect");
     loadAll();
     setTimeout(() => {
-      setNewErrrorMessage(null)
+      setNewErrorMessage(null)
     }, 3000)
   }, []);
 
@@ -25,6 +25,9 @@ const App = () => {
     .then(persons => {
       setPersons(persons);
     });
+
+    console.log("inside load")
+    console.log("persons", persons)
   }
 
   const newPerson = (event) => {
@@ -44,9 +47,9 @@ const App = () => {
           .then(responsePerson => {
             console.log("inside create person promise", responsePerson);
             setPersons(persons.concat(responsePerson));
-            setNewErrrorMessage(`Added ${person.name}`)
+            setNewErrorMessage(`Added ${person.name}`)
             setTimeout(() => {
-              setNewErrrorMessage(null)
+              setNewErrorMessage(null)
             }, 3000)
           });
       }
@@ -96,10 +99,10 @@ const App = () => {
       console.log("inside delete");
       loadAll()
     }).catch(error => {
-      setNewErrrorMessage(`Person ${currentDelete} was already removed`)
+          setNewErrorMessage(`Person ${currentDelete} was already removed`)
       loadAll()
       setTimeout(() => {
-        setNewErrrorMessage(null)
+        setNewErrorMessage(null)
       }, 3000)
     }
     )
