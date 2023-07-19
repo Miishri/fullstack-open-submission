@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const dbURL = "http://localhost:3001/phonebook";
+const dbURL = "/phonebook";
 
 const getAll = () => {
     const getRequest = axios.get(dbURL);
