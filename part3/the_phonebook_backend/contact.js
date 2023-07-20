@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-require('dotenv').config({ path: './mongo.env' });
 
 const url = process.env.URL
 
@@ -8,9 +7,8 @@ if (!url) {
     process.exit()
 }
 
-
-
 mongoose.set('strictQuery',false)
+
 console.log("Connecting to URL: ", url)
 mongoose.connect(url).then(
     result => {
@@ -33,23 +31,4 @@ phonebookSchema.set('toJSON', {
     }
 })
 
-const Contact = mongoose.model('Contact', phonebookSchema)
-
-const contact = new Contact({
-    name: process.argv[2],
-    number: process.argv[3]
-})
-
-if (contact.name && contact.number) {
-    contact.save().then(result => {
-        console.log(`Added ${result.name} number ${result.number} to phonebook`)
-        mongoose.connection.close()
-    })
-}else {
-    Contact.find({}).then(phonebook => {
-        phonebook.forEach(contact => {
-            console.log(contact)
-        })
-        mongoose.connection.close()
-    })
-}
+module.exports = mongoose.model('Contact', phonebookSchema)
