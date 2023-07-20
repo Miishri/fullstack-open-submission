@@ -24,10 +24,10 @@ const App = () => {
     .getAll()
     .then(persons => {
       setPersons(persons);
+      console.log(persons)
     });
 
     console.log("inside load")
-    console.log("persons", persons)
   }
 
   const newPerson = (event) => {
@@ -35,17 +35,19 @@ const App = () => {
   
     const person = {
       name: newName,
-      number: newNumber,
-      id: persons.length + 1,
+      number: newNumber
     };
   
     console.log("inside add new person");
+    console.log("this is here", persons)
   
     if (!phoneExists(person) && !personExists(person)) {
-      if (newName !== '' && newNumber !== '') {
+      if (newName !== '' && !newNumber) {
         phoneService.createPerson(person)
           .then(responsePerson => {
+
             console.log("inside create person promise", responsePerson);
+
             setPersons(persons.concat(responsePerson));
             setNewErrorMessage(`Added ${person.name}`)
             setTimeout(() => {
@@ -56,6 +58,8 @@ const App = () => {
       setNewName('');
       setNewNumber(0);
     } else {
+
+
       const existingPerson = persons.find(p => p.name === person.name);
       if (existingPerson.number !== person.number) {
         const response = window.confirm(`Do you want to change the phone number for ${person.name}`);

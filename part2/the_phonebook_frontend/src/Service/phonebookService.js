@@ -6,6 +6,10 @@ const getAll = () => {
     const getRequest = axios.get(dbURL);
     return getRequest.then(getResponse => getResponse.data);
 }
+const getById = personId => {
+    const getRequest = axios.get(`${dbURL}/${personId}`)
+    return getRequest.then(getResponse => getResponse.data)
+}
 
 const createPerson = newPerson => {
     const postRequest = axios.post(dbURL, newPerson);
