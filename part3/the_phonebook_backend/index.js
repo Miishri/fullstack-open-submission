@@ -48,7 +48,7 @@ app.post("/phonebook", (req, res) => {
         res.json(savedContact)
     }).catch(error => {
         console.log("Error occurred inside post", error)
-        return res.status(400).send({ error: 'Could not create new contact' })
+        return res.status(400).send({ error: `Contact creation failed: Contact name (${contact.name}) provided is less than minimum length of (3) characters.`})
     })
 })
 app.get('/phonebook', (req, res) => {

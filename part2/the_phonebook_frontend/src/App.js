@@ -1,35 +1,36 @@
 import { useEffect, useState } from 'react'
 import phoneService from './Service/phonebookService'
 import Person from './model/Person'
-import ErrorNotification from './ErrorNotification'
+import ErrorNotification from './comps/ErrorNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState(0);
+
   const [newFilter, setNewFilter] = useState('');
-  const [errorMessage, setNewErrorMessage] = useState('No error :)')
+
+  const [errorMessage, setNewErrorMessage] = useState('No error')
   const [currentDelete, setCurrentDelete] = useState('')
 
   useEffect(() => {
-    console.log(" im in effect");
+    console.log("Inside useEffect: Loading everything");
     loadAll();
     setTimeout(() => {
       setNewErrorMessage(null)
+      console.log("Inside useEffect: setting errorMessage to null")
     }, 3000)
   }, []);
 
-  const loadAll = () => { 
+
+  const loadAll = () => {
     phoneService
     .getAll()
     .then(persons => {
       setPersons(persons);
-      console.log(persons)
+      console.log("Inside loadAll: LOADED ", persons)
     });
-
-    console.log("inside load")
   }
-
   const newPerson = (event) => {
     event.preventDefault();
   
@@ -37,79 +38,75 @@ const App = () => {
       name: newName,
       number: newNumber
     };
-  
-    console.log("inside add new person");
-    console.log("this is here", persons)
-  
-    if (!phoneExists(person) && !personExists(person)) {
-      if (newName !== '' && !newNumber) {
-        phoneService.createPerson(person)
-          .then(responsePerson => {
 
-            console.log("inside create person promise", responsePerson);
+    console.log("Inside newPerson(): ", person);
 
-            setPersons(persons.concat(responsePerson));
-            setNewErrorMessage(`Added ${person.name}`)
-            setTimeout(() => {
-              setNewErrorMessage(null)
-            }, 3000)
-          });
-      }
-      setNewName('');
-      setNewNumber(0);
+    if (!personCheck(person)) {
+      phoneService.createPerson(person).then(responsePerson => {
+        console.log("Inside createPerson request:", responsePerson)
+
+        loadAll()
+        setNewErrorMessage(`Added ${person.name}`)
+      }).catch(error => {
+        setNewErrorMessage(`Error occurred inside createPerson request: ${error.response.data.error}`)
+      }).finally(() => {
+        setTimeout(() => {
+          setNewErrorMessage(null)
+          console.log("Inside createPerson request: setting errorMessage to null")
+        }, 3000)
+        setNewName('');
+        setNewNumber(0);
+      })
     } else {
-
-
-      const existingPerson = persons.find(p => p.name === person.name);
-      if (existingPerson.number !== person.number) {
+      const personExists = persons.find(p => p.name === person.name);
+      if (personExists.number !== person.number) {
         const response = window.confirm(`Do you want to change the phone number for ${person.name}`);
         if (response) {
-          phoneService.updatePerson(existingPerson.id, person)
+          phoneService.updatePerson(personExists.id, person)
             .then(() => {
-              console.log("complete update");
+              console.log("Inside updatePerson request: ", person);
               loadAll();
             });
         }
       }
     }
-  };
-
-
-  const handlePersonChange = (event) => {
-    console.log("In handle person change:", event.target.value);
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    console.log("In handle phone change:", event.target.value);
-    setNewNumber(event.target.value);
   }
 
-  const handleFilterChange = (event) => {
-    console.log("In handle filter change:", event.target.value);
-    setNewFilter(event.target.value)
-  }
-
-  function phoneExists(person) {
-    return persons.some(p => p.number === person.number);
-  }
-  function personExists(person) {
-    return persons.some(p => p.name === person.name);
-  }
-
-  const handleDeleteButton = (person) => {
+  const deletePerson = (person) => {
     setCurrentDelete(person.name)
-    phoneService.deletePerson(person.id).then(() => {
-      console.log("inside delete");
-      loadAll()
+
+    console.log("Inside deletePerson: ", person)
+
+    phoneService.deletePerson(person.id).then(deleted => {
+      if (deleted) {
+        console.log("Inside deletePerson: added ", person)
+      }
     }).catch(error => {
-          setNewErrorMessage(`Person ${currentDelete} was already removed`)
-      loadAll()
+      setNewErrorMessage(`Person ${currentDelete} was already removed`)
+    }).finally(() => {
       setTimeout(() => {
         setNewErrorMessage(null)
       }, 3000)
-    }
-    )
+      loadAll()
+    })
+  }
+
+
+  function personCheck(person) {
+    return persons.some(p => p.name === person.name && p.number === person.number);
+  }
+
+  const handlePersonChange = (event) => {
+    console.log("Inside handlePersonChange:", event.target.value);
+    setNewName(event.target.value);
+  };
+  const handleNumberChange = (event) => {
+    console.log("Inside handleNumberChange:", event.target.value);
+    setNewNumber(event.target.value);
+  }
+  const handleFilterChange = (event) => {
+    console.log("Inside handleFilterChange:", event.target.value);
+    setNewFilter(event.target.value)
   }
   
   return (
@@ -148,19 +145,23 @@ const App = () => {
             persons.map(person => {
               if (newFilter !== '') {
                 if (person.name.includes(newFilter)) {
+                  console.log("Inside filterCheck:", newFilter)
                   return (
                     <li key={person.id}>
-                      <Person name={person.name} number={person.number} /> 
+                      <Person name={person.name} number={person.number} />
                       <button value={person.id} >button</button>
                     </li>
                   )
+
+                }else {
+                  console.log("Inside filterCheckFailed:", newFilter)
                 }
               }else {
                 return (
-                  <li key={person.id}>
-                    <Person key={person.id} name={person.name} number={person.number} /> 
-                    <button onClick={() => handleDeleteButton(person)}>button</button>
-                  </li>
+                    <li key={person.id}>
+                      <Person key={person.id} name={person.name} number={person.number} />
+                      <button onClick={() => deletePerson(person)}>button</button>
+                    </li>
                 )
               }
             }
