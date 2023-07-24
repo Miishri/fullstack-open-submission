@@ -48,7 +48,12 @@ app.post("/phonebook", (req, res) => {
         res.json(savedContact)
     }).catch(error => {
         console.log("Error occurred inside post", error)
-        return res.status(400).send({ error: `Contact creation failed: Contact name (${contact.name}) provided is less than minimum length of (3) characters.`})
+        return res.status(400).send({
+            error:
+                contact.name.length < 3
+                    ? `Contact creation failed: Contact name (${contact.name}) provided is less than minimum length of (3) characters.`
+                    : `Contact creation failed: Contact number (${contact.number}) does not match requirement (09-1234556 and 040-22334455 are valid phone numbers)`,
+        });
     })
 })
 app.get('/phonebook', (req, res) => {
