@@ -31,17 +31,16 @@ const App = () => {
       console.log("Inside loadAll: LOADED ", persons)
     });
   }
-  const newPerson = (event) => {
+  const newPerson = async (event) => {
     event.preventDefault();
   
     const person = {
       name: newName,
       number: newNumber
-    };
+    }
+    const personExists = persons.find(p => p.name === person.name);
 
-    console.log("Inside newPerson(): ", person);
-
-    if (!personCheck(person)) {
+    if (!(personCheck(personExists))) {
       phoneService.createPerson(person).then(responsePerson => {
         console.log("Inside createPerson request:", responsePerson)
 
@@ -54,24 +53,20 @@ const App = () => {
           setNewErrorMessage(null)
           console.log("Inside createPerson request: setting errorMessage to null")
         }, 3000)
-        setNewName('');
-        setNewNumber(0);
       })
-    } else {
-      const personExists = persons.find(p => p.name === person.name);
-      if (personExists.number !== person.number) {
-        const response = window.confirm(`Do you want to change the phone number for ${person.name}`);
-        if (response) {
-          phoneService.updatePerson(personExists.id, person)
+    }else {
+      const response = window.confirm(`Do you want to change the phone number for ${person.name}`);
+      if (response) {
+        phoneService.updatePerson(personExists.id, person)
             .then(() => {
               console.log("Inside updatePerson request: ", person);
               loadAll();
             });
-        }
       }
     }
+    setNewName('');
+    setNewNumber(0);
   }
-
   const deletePerson = (person) => {
     setCurrentDelete(person.name)
 
@@ -91,9 +86,8 @@ const App = () => {
     })
   }
 
-
   function personCheck(person) {
-    return persons.some(p => p.name === person.name && p.number === person.number);
+    return persons.some(p => person.name === p.name)
   }
 
   const handlePersonChange = (event) => {
