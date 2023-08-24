@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const dummy = (blogs) => {
     return 1;
 }
@@ -22,11 +23,12 @@ const highestLikes = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-
+    return _.filter(blogs, {'author': 'Edsger W. Dijkstra'});
 }
 
 module.exports = {
     dummy,
     totalLikes,
-    highestLikes
+    highestLikes,
+    mostBlogs
 }
